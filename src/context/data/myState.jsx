@@ -68,7 +68,7 @@ function MyState(props) {
     setLoading(true)
     try {
       const q = query(
-        collection(fireDb, "products"),
+        collection(fireDB, "products"),
         orderBy("time"),
         // limit(5)
       );
@@ -95,7 +95,7 @@ function MyState(props) {
   return (
     <MyContext.Provider value={{ 
       mode, toggleMode, loading,setLoading,
-      products, setProducts,addProduct }}>
+      products, setProducts,addProduct, product }}>
       {props.children}
     </MyContext.Provider>
   )
