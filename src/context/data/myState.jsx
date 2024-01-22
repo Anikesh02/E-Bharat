@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import MyContext from './myContext';
 import { fireDB } from '../../firebase/FirebaseConfig';
-import { Timestamp, addDoc, collection, onSnapshot, orderBy, query } from 'firebase/firestore';
+import { Timestamp, addDoc, collection, deleteDoc, doc, onSnapshot, orderBy, query, setDoc } from 'firebase/firestore';
 import { toast } from 'react-toastify';
 
 
@@ -35,7 +35,6 @@ function MyState(props) {
         year: "numeric",
       }
     )
-
   })
 
   // ********************** Add Product Section  **********************
@@ -92,10 +91,48 @@ function MyState(props) {
   }, []);
 
 
+  // ********************** Update Product Section  **********************
+  const edithandle = (item) => {
+    setProducts(item)
+  }
+  // update product
+  const updateProduct = async () => {
+    setLoading(true)
+    try {
+      await setDoc(doc(fireDB, "products", products.id), products);
+      toast.success("Product Updated successfully")
+      setTimeout(() => {
+          window.location.href = "/dashboard"
+        }, 800);
+        getProductData();
+      
+      setLoading(false)
+    } catch (error) {
+      console.log(error)
+      setLoading(false)
+    }
+    // setProducts("")
+  }
+
+  // ********************** Delete Product Section  **********************
+  const deleteProduct = async (item) => {
+    setLoading(true)
+    try {
+      await deleteDoc(doc(fireDB, "products", item.id));
+      toast.success('Product Deleted successfully')
+      getProductData()
+      setLoading(false)
+    } catch (error) {
+      // toast.success('Product Deleted Falied')
+      console.log(error)
+      setLoading(false)
+    }
+  }
+
   return (
     <MyContext.Provider value={{ 
       mode, toggleMode, loading,setLoading,
-      products, setProducts,addProduct, product }}>
+      products, setProducts,addProduct, product, edithandle, updateProduct,  deleteProduct }}>
       {props.children}
     </MyContext.Provider>
   )
