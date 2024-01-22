@@ -47,7 +47,10 @@ function MyState(props) {
     setLoading(true)
     try {
       await addDoc(productRef, products)
-      toast.success("Product Add successfully")
+      toast.success("Product Added Successfully")
+      setTimeout(() => {
+        window.location.href = "/dashboard"
+      }, 800);
       getProductData()
       closeModal()
       setLoading(false)
