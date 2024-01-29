@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { deleteFromCart } from '../../redux/cartSlice';
 import { toast } from 'react-toastify';
 import { addDoc, collection } from 'firebase/firestore';
+import { fireDB } from '../../firebase/FirebaseConfig';
 
 
 function Cart() {
@@ -40,7 +41,8 @@ function Cart() {
     localStorage.setItem('cart', JSON.stringify(cartItems));
   }, [cartItems])
 
-
+  
+  // Payment Integration
 
   const [name, setName] = useState("")
   const [address, setAddress] = useState("");
@@ -106,9 +108,12 @@ function Cart() {
           userid: JSON.parse(localStorage.getItem("user")).user.uid,
           paymentId
         }
-
+      
         try {
-          const result = addDoc(collection(fireDB, "orders"), orderInfo)
+          
+          const orderRef = collection(fireDB, 'order');
+          addDoc(orderRef, orderInfo);
+
         } catch (error) {
           console.log(error)
         }
@@ -117,9 +122,8 @@ function Cart() {
       theme: {
         color: "#3399cc"
       }
-
-
     };
+    
     var pay = new window.Razorpay(options);
     pay.open();
     console.log(pay)
@@ -134,6 +138,7 @@ function Cart() {
           <div className="rounded-lg md:w-2/3 ">
 
             {cartItems.map((item, index) => {
+              const { title, price, description, imageUrl } = item;
               return (
                 <div className="justify-between mb-6 rounded-lg border  drop-shadow-xl bg-white p-6  sm:flex  sm:justify-start" style={{ backgroundColor: mode === 'dark' ? 'rgb(32 33 34)' : '', color: mode === 'dark' ? 'white' : '', }}>
                   <img src={item.imageUrl} alt="product-image" className="w-full rounded-lg sm:w-40" />
